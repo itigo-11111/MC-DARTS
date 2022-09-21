@@ -12,12 +12,8 @@ This code was created based on the [DARTS](https://github.com/quark0/darts).
 
 ## Reference
 
-## Author
-
-[twitter](https://twitter.com/Kotabrog)
-
 ## Licence
 
-[MIT](https://......)
+[apache license 2.0](https://github.com/itigo-11111/MC-DARTS/blob/main/LICENSE)
 
 ## Citation
