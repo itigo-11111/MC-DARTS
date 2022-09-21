@@ -1,4 +1,4 @@
-# name
+# mc-darts
 
 image or gif
 
