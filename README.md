@@ -1,6 +1,6 @@
 # mc-darts
 
-adding constraints to DARTS to search for a network architecture considering the accuracy and the model size.
+MC-DARTS adding constraints to DARTS to search for a network architecture considering the accuracy and the model size.
 
 This code was created based on the [DARTS](https://github.com/quark0/darts).
 
