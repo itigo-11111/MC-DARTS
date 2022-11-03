@@ -15,7 +15,7 @@ New branches for loss and update formulas have been added.
 ## Features
 
 ## Network Architecture
-
+See [genotypes.py](https://github.com/itigo-11111/MC-DARTS/genotypes.py)
 
 ## Reference
 
