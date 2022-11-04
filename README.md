@@ -22,15 +22,15 @@ python-graphviz (0.20)
 
 ## Usage
 
-#architecture search 
-'''
+##### architecture search 
+```
 python train_search.py --limit_param 2500000
-'''
+```
 
-#architecture evaluation ( arch => use architecture)
-'''
+##### architecture evaluation ( arch => use architecture)
+```
 python train.py --arch "mc_darts2900000"
-'''
+```
 
 ## Network Architecture (Searched)
 See [genotypes.py](https://github.com/itigo-11111/MC-DARTS/blob/main/genotypes.py)
