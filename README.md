@@ -44,3 +44,14 @@ See [genotypes.py](https://github.com/itigo-11111/MC-DARTS/blob/main/genotypes.p
 
 
 ## Citation
+If you use our code, please cite our paper.
+```
+@inproceedings{
+hemmi2022mcdarts,
+title={{MC}-{DARTS} : Model Size Constrained Differentiable Architecture Search},
+author={KAZUKI HEMMI and Yuki Tanigaki and Masaki Onishi},
+booktitle={Has it Trained Yet? NeurIPS 2022 Workshop},
+year={2022},
+url={https://openreview.net/forum?id=jKJ6OcvqdQ}
+}
+```
