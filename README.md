@@ -6,8 +6,12 @@ Architecture Search) adding constraints to DARTS to search for a network archite
 This code was created based on the [DARTS](https://github.com/quark0/darts).
 New branches for loss and update formulas have been added.
 
-## Requirement
+## Requirement ( my setting version)
 
+Python (3.7)
+Numpy (1.21.5)
+Pytorch (1.5.0)
+tqdm (4.64.1)
 
 ## Usage
 
