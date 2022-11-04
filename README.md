@@ -22,12 +22,12 @@ python-graphviz (0.20)
 
 ## Usage
 
-##### architecture search 
+#### Architecture search 
 ```
 python train_search.py --limit_param 2500000
 ```
 
-##### architecture evaluation ( arch => use architecture)
+#### Architecture evaluation ( arch => use architecture)
 ```
 python train.py --arch "mc_darts2900000"
 ```
