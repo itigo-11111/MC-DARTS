@@ -34,14 +34,13 @@ def create_dir(path):
 
 parser = argparse.ArgumentParser("cifar")
 parser.add_argument('--data', type=str, default='./cifar10/', help='location of the data corpus')
-parser.add_argument('--batch_size', type=int, default=64, help='batch size')
+parser.add_argument('--batch_size', type=int, default=128, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.025, help='init learning rate')
 parser.add_argument('--learning_rate_min', type=float, default=0.0, help='min learning rate')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=3e-4, help='weight decay')
 parser.add_argument('--report_freq', type=float, default=50, help='report frequency')
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
-# 50
 parser.add_argument('--epochs', type=int, default=50, help='num of training epochs')
 parser.add_argument('--init_channels', type=int, default=16, help='num of init channels')
 parser.add_argument('--layers', type=int, default=8, help='total number of layers')
@@ -50,17 +49,16 @@ parser.add_argument('--model_path', type=str, default='saved_models', help='path
 parser.add_argument('--cutout', action='store_true', default=True, help='use cutout')
 parser.add_argument('--cutout_length', type=int, default=16, help='cutout length')
 parser.add_argument('--drop_path_prob', type=float, default=0.3, help='drop path probability')
-parser.add_argument('--save_dir', type=str, default='EXP', help='experiment name')
+parser.add_argument('--save', type=str, default='EXP', help='experiment name')
 # parser.add_argument('--seed', type=int, default=2, help='random seed')
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
-parser.add_argument('--train_portion', type=float, default=0.5, help='portion of training data')
+parser.add_argument('--train_portion', type=float, default=0.8, help='portion of training data')
 parser.add_argument('--unrolled', action='store_true', default=False, help='use one-step unrolled validation loss')
 parser.add_argument('--arch_learning_rate', type=float, default=3e-4, help='learning rate for arch encoding')
 parser.add_argument('--gammas_learning_rate', type=float, default=6e-2, help='learning rate for arch encoding')
 parser.add_argument('--arch_weight_decay', type=float, default=1e-3, help='weight decay for arch encoding')
-parser.add_argument("--num_workers", default=8, type=int, help="num of workers(data_loader)")
 parser.add_argument('--multigpu', default=True, action='store_true', help='If true, training is not performed.')
-parser.add_argument('--auxiliary', action='store_true', default=False, help='use auxiliary tower')
+parser.add_argument('--auxiliary', action='store_true', default=False, help='use auxiliary tower') # 11/4 need check
 parser.add_argument('--auxiliary_weight', type=float, default=0.4, help='weight for auxiliary loss')
 parser.add_argument('--train_mode', action='store_true', default=True, help='use train after search')
 parser.add_argument('--val_mode', action='store_true', default=True, help='use validation and check accuracy')
@@ -90,8 +88,6 @@ def main():
   logging.getLogger().addHandler(fh)
 
   CIFAR_CLASSES = 10
-  if args.set=='cifar100':
-      CIFAR_CLASSES = 100
   args.seed = args.id *1000 + args.iteration
   if not torch.cuda.is_available():
     logging.info('no gpu device available')
@@ -116,9 +112,6 @@ def main():
   # model = torch.nn.DataParallel(model)
   model = model.to(device)
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
-  def worker_init_fn(worker_id):
-    # random.seed(worker_id+args.seed)
-    random.seed(worker_id)
 
   optimizer = torch.optim.SGD(
       model.parameters(),
@@ -126,56 +119,31 @@ def main():
       momentum=args.momentum,
       weight_decay=args.weight_decay)
 
-  # train_transform, valid_transform = utils._data_transforms_cifar10(args)
-  # if args.set=='cifar100':
-  #     train_data = dset.CIFAR100(root=args.data, train=True, download=True, transform=train_transform)
-  # else:
-  #     train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
+  train_transform, valid_transform = utils._data_transforms_cifar10(args)
+  train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
 
-  # num_train = len(train_data)
-  # indices = list(range(num_train))
-  # split = int(np.floor(args.train_portion * num_train))
+  num_train = len(train_data)
+  indices = list(range(num_train))
+  split = int(np.floor(args.train_portion * num_train))
 
-  # train_queue = torch.utils.data.DataLoader(
-  #     train_data, batch_size=args.batch_size,
-  #     sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
-  #     pin_memory=True, num_workers=2)
+  print(split) # 11/4 add
+
+  train_queue = torch.utils.data.DataLoader(
+      train_data, batch_size=args.batch_size,
+      sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[:split]),
+      pin_memory=True, num_workers=2)
 
 
-  # valid_queue = torch.utils.data.DataLoader(
-  #     train_data, batch_size=args.batch_size,
-  #     sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
-  #     pin_memory=True, num_workers=2)
-
-  train_transform = transforms.Compose([
-                      transforms.Resize(args.img_size),
-                      transforms.Pad(4, padding_mode = 'reflect'),
-                      transforms.RandomCrop(args.img_size),
-                      transforms.RandomHorizontalFlip(),
-                      transforms.ToTensor(),
-                      # transforms.Normalize((-0.0891, 0.0698, 0.3051), (1.1908, 1.1972, 1.1822))])
-                      transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
-
-  train_fractal = dset.ImageFolder(os.path.join(args.data, 'train'),transform=train_transform)
-  # train_fractal = DBLoader(args.data,'TRAIN',train_transform)
-  train_queue = torch.utils.data.DataLoader(dataset=train_fractal, batch_size=args.batch_size,
-                                          shuffle=True, num_workers=args.num_workers,
-                                          pin_memory=False, drop_last=True, worker_init_fn=worker_init_fn)
-
-  val_transform = transforms.Compose([
-                    transforms.Resize(args.img_size),
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
-  # val_dataset = DBLoader(args.path2db,'VALIDATION',val_transform)
-  val_dataset = dset.ImageFolder(os.path.join(args.data, 'val'),transform=val_transform)
-  valid_queue = torch.utils.data.DataLoader(dataset=val_dataset, batch_size=args.batch_size,
-                                          shuffle=False, num_workers=args.num_workers,
-                                          pin_memory=False, drop_last=False, worker_init_fn=worker_init_fn)
+  valid_queue = torch.utils.data.DataLoader(
+      train_data, batch_size=args.batch_size,
+      sampler=torch.utils.data.sampler.SubsetRandomSampler(indices[split:num_train]),
+      pin_memory=True, num_workers=2)
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, float(args.epochs), eta_min=args.learning_rate_min)
 
   architect = Architect(model, args)
+
   csv_file_path = args.save + 'output.csv'
   with open(csv_file_path, 'w') as f:
       writer = csv.writer(f)
@@ -199,36 +167,11 @@ def main():
     if epoch != 1:
       scheduler.step()
     lr = scheduler.get_last_lr()[0]
-    # logging.info('epoch %d lr %e', epoch, lr)
 
     genotype = model.genotype()
-    # model2 = Network2(args.init_channels, CIFAR_CLASSES, args.layers, args.auxiliary, genotype)
     model2 = Network2(36, CIFAR_CLASSES, args.target_layers, args.auxiliary, genotype)
     pytorch_total_params = sum(p.numel() for p in model2.parameters())
     pytorch_total_params_train = sum(p.numel() for p in model2.parameters() if p.requires_grad)
-    # model2.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    # print(model2.drop_path_prob)
-    # summary(model2,(3,32,32))
-    
-    # prev_num = 0
-    # for i in range(1,10):
-    #   genotype = Genotype(normal=[('max_pool_3x3', 0), ('avg_pool_3x3', 1), ('max_pool_3x3', 0), ('max_pool_3x3', 2), ('skip_connect', 3), ('avg_pool_3x3', 2), ('max_pool_3x3', 4), ('avg_pool_3x3', 3)], normal_concat=range(2, 6), reduce=[('avg_pool_3x3', 1), ('avg_pool_3x3', 0), ('skip_connect', 0), ('max_pool_3x3', 2), ('max_pool_3x3', 3), ('skip_connect', 2), ('max_pool_3x3', 4), ('skip_connect', 3)], reduce_concat=range(2, 6))
-    #   model3 = Network2(args.init_channels, CIFAR_CLASSES, i, args.auxiliary, genotype)
-    #   model3 = model3.to(device)
-      
-    #   pytorch_total_params3 = sum(p.numel() for p in model3.parameters()) 
-    #   if not i > 1:
-    #     model3.drop_path_prob = args.drop_path_prob * epoch / args.epochs
-    #     summary(model3,(3,32,32))
-    #   # print("layers:{}=>{} ({})".format(i,pytorch_total_params3,pytorch_total_params3-prev_num))
-    #   prev_num = pytorch_total_params3
-
-    # print(aa)
-    # summary(model2,(3,32,32))
-    # logging.info('genotype = %s', genotype)
-
-    #print(F.softmax(model.alphas_normal, dim=-1))
-    #print(F.softmax(model.alphas_reduce, dim=-1))
     
     # training
     train_acc, train_obj, max_step,train_param,genotype = train(train_queue, valid_queue, model, architect, criterion, optimizer, lr,epoch,device,pytorch_total_params_train,args.limit_param,num_flag,max_step,args.lambda_a,param_prev,genotype,csv_file_path_param_ite,CIFAR_CLASSES)
@@ -320,7 +263,7 @@ def train(train_queue, valid_queue, model, architect, criterion, optimizer, lr,e
     target_search = Variable(target_search, requires_grad=False).to(device)
 
     # epochs >= 15 -> 2 -> 15
-    if epoch>=15:
+    if epoch>=2:
       # if arcstep_flag == 0:
       model_copy = model
       genotype = model.genotype()
