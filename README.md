@@ -35,9 +35,6 @@ python train.py --arch "mc_darts2900000"
 ## Network Architecture (Searched)
 See [genotypes.py](https://github.com/itigo-11111/MC-DARTS/blob/main/genotypes.py)
 
-## Reference
-
-
 ## Licence
 
 [apache license 2.0](https://github.com/itigo-11111/MC-DARTS/blob/main/LICENSE)
