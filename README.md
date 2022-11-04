@@ -9,10 +9,15 @@ New branches for loss and update formulas have been added.
 ## Requirement ( my setting version)
 
 Python (3.7)
+
 Numpy (1.21.5)
+
 Pytorch (1.5.0)
+
 tqdm (4.64.1)
+
 torchsummary (1.5.1)
+
 python-graphviz (0.20)
 
 ## Usage
