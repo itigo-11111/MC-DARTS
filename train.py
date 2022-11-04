@@ -52,7 +52,7 @@ parser.add_argument("--seed", default=1, type=int, help="seed")
 parser.add_argument("--iteration", default=1, type=int, help="iteration")
 parser.add_argument("--id", default=1, type=int, help="sampler id")
 parser.add_argument("--limit_param", default=2000000, type=int, help="upper limit of params")
-parser.add_argument("--lambda_a", default=0.0001, type=float, help="lambda of architecture")
+parser.add_argument("--lambda_a", default=0.0001, type=float, help="lambda of architecture") 
 parser.add_argument('--gammas_learning_rate', type=float, default=6e-4, help='learning rate for arch encoding')
 
 args = parser.parse_args()
@@ -63,7 +63,7 @@ def main():
   # args.layers = layers
   args.img_size = (32, 32)
 
-  args.save = './darts_cifar10_train/name_{}_id_{}/'.format(args.arch,args.id)  
+  args.save = './mc-darts_cifar10_train/name_{}_id_{}/'.format(args.arch,args.id)  
   create_dir(args.save)
   # utils.create_exp_dir(args.save, scripts_to_save=glob.glob('*.py'))
 
@@ -75,9 +75,6 @@ def main():
   logging.getLogger().addHandler(fh)
 
   CIFAR_CLASSES = 10
-
-  if args.set=='cifar100':
-      CIFAR_CLASSES = 100
   if not torch.cuda.is_available():
     logging.info('no gpu device available')
     sys.exit(1)
@@ -104,10 +101,6 @@ def main():
   model = model.to(device)
 
   logging.info("param size = %fMB", utils.count_parameters_in_MB(model))
-  def worker_init_fn(worker_id):
-    # random.seed(worker_id+args.seed)
-    random.seed(worker_id+args.seed)
-
 
   criterion = nn.CrossEntropyLoss()
   criterion = criterion.to(device)
@@ -118,36 +111,15 @@ def main():
       weight_decay=args.weight_decay
       )
 
-  train_transform = transforms.Compose([
-                      transforms.Resize(args.img_size),
-                      transforms.Pad(4, padding_mode = 'reflect'),
-                      transforms.RandomCrop(args.img_size),
-                      transforms.RandomHorizontalFlip(),
-                      transforms.ToTensor(),
-                      # transforms.Normalize((-0.0891, 0.0698, 0.3051), (1.1908, 1.1972, 1.1822))])
-                      transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
+  train_transform, valid_transform = utils._data_transforms_cifar10(args)
+  train_data = dset.CIFAR10(root=args.data, train=True, download=True, transform=train_transform)
+  valid_data = dset.CIFAR10(root=args.data, train=False, download=True, transform=valid_transform)
 
-  train_fractal = dset.ImageFolder(os.path.join(args.data, 'train'),transform=train_transform)
-  # train_fractal = DBLoader(args.data,'TRAIN',train_transform)
-  train_queue = torch.utils.data.DataLoader(dataset=train_fractal, batch_size=args.batch_size,
-                                          shuffle=True, num_workers=args.num_workers,
-                                          pin_memory=False, drop_last=True, worker_init_fn=worker_init_fn)
+  train_queue = torch.utils.data.DataLoader(
+      train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
 
-  val_transform = transforms.Compose([
-                    transforms.Resize(args.img_size),
-                    transforms.ToTensor(),
-                    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))])
-  # val_dataset = DBLoader(args.path2db,'VALIDATION',val_transform)
-  val_dataset = dset.ImageFolder(os.path.join(args.data, 'val'),transform=val_transform)
-  valid_queue = torch.utils.data.DataLoader(dataset=val_dataset, batch_size=args.batch_size,
-                                          shuffle=False, num_workers=args.num_workers,
-                                          pin_memory=False, drop_last=False, worker_init_fn=worker_init_fn)
-
-  # train_queue = torch.utils.data.DataLoader(
-  #     train_data, batch_size=args.batch_size, shuffle=True, pin_memory=True, num_workers=2)
-
-  # valid_queue = torch.utils.data.DataLoader(
-  #     valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
+  valid_queue = torch.utils.data.DataLoader(
+      valid_data, batch_size=args.batch_size, shuffle=False, pin_memory=True, num_workers=2)
 
   scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, float(args.epochs))
   best_train_acc = 0.0
