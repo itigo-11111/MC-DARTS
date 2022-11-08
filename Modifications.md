@@ -29,9 +29,9 @@ import numpy as np
 ```
 #### Add main
 - Add a process that uses a part of operations to MixedOp
-- Change nn.AdaptiveAvgPool2d to match pytorch version
 - Add variables to be defined in initialize_alphas
-- Change FactorizedReduce to process differently depending on whether the input is even or odd.
+- Change nn.AdaptiveAvgPool2d to match pytorch version
+- Change FactorizedReduce to process differently depending on whether the input is even or odd
 
 ## model.py
 - Change fully-connected layer inputs
