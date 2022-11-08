@@ -37,16 +37,11 @@ class Architect(object):
 
   def step(self, input_train, target_train, input_valid, target_valid, eta, network_optimizer, pytorch_total_params_train,step,limit_param,num_flag,unrolled):
     self.optimizer.zero_grad()
-    # logging.info(self.model.alphas_normal)
-    # print(self.model.gammas_normal)
     if unrolled:
         self._backward_step_unrolled(input_train, target_train, input_valid, target_valid, eta, network_optimizer)
     else:
         self._backward_step(input_valid, target_valid,pytorch_total_params_train,step,limit_param,num_flag)
     self.optimizer.step()
-    # print("after:")
-    # logging.info(self.model.alphas_normal)
-    # print(self.model.gammas_normal)
 
   def param_step(self, input_train, target_train, input_valid, target_valid, eta, network_optimizer, pytorch_total_params_train,step,limit_param, num_flag,lambda_a,param_prev):
 
