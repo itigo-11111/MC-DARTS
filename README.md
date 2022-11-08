@@ -5,6 +5,7 @@ Architecture Search) adding constraints to DARTS to search for a network archite
 
 This code was created based on the [DARTS](https://github.com/quark0/darts).
 New branches for loss and update formulas have been added.
+[Detailed modifications](https://github.com/itigo-11111/MC-DARTS/blob/main/Modifications.md)
 
 ## Requirement ( my setting version)
 
