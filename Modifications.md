@@ -23,7 +23,7 @@ from model import NetworkCIFAR as Network2
 ## model.py
 - Change fully-connected layer inputs
 
-## model_search.py
+## model.py
 
 #### Add library
 ```
