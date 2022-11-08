@@ -12,8 +12,8 @@ from model import NetworkCIFAR as Network2
 ```
 
 #### Add main
-- Add optimizer to update part of alpha
-- Add param_step , param_backward_step for Change Alpha's Priority and new loss calculation for the MC-DARTS
+- Add an optimizer to update the part of the alpha
+- Add a param_step, a param_backward_step for Change Alpha's Priority and new loss calculation for the MC-DARTS
 
 
 ## genotypes.py 
@@ -76,10 +76,10 @@ parser.add_argument("--limit_param", default=2000000, type=int, help="upper limi
 parser.add_argument("--lambda_a", default=0.1, type=float, help="lambda of architecture")
 ```
 #### Add main
-- Add csv output function for number of parameters, training loss, etc.
-- Add code to save architecture visualization results per Epochs
+- Add csv output function for the number of parameters, training loss, etc.
+- Add a code to save architecture visualization results per Epochs
 - Add a proposed method of calculating the number of parameters and changing the process depending on the results
-- Add code to measure total time, validation time, and latency
+- Add a code to measure total time, validation time, and the latency
 - Add a process that can move directly to the re-training code(train.py) using the architecture with the highest accuracy in the search
 - Display of calculation progress using tqdm library
 
@@ -106,8 +106,8 @@ parser.add_argument("--lambda_a", default=0.0001, type=float, help="lambda of ar
 parser.add_argument('--gammas_learning_rate', type=float, default=6e-4, help='learning rate for arch encoding')
 ```
 #### Add main
-- Add csv output function for number of parameters, training loss, etc.
-- Add code to measure total time, validation time, and latency
+- Add csv output function for the number of parameters, the training loss, etc.
+- Add a code to measure total time, validation time, and the latency
 - Display of calculation progress using tqdm library
 
 ## utils.py
@@ -130,4 +130,4 @@ except ImportError:
 import os
 ```
 #### Add main
-- 
+- Changed to be able to move an architecture from train_search.py
