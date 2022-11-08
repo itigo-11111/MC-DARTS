@@ -46,7 +46,6 @@ parser.add_argument('--drop_path_prob', type=float, default=0.2, help='drop path
 parser.add_argument('--save_dir', type=str, default='EXP', help='experiment name')
 parser.add_argument('--arch', type=str, default='mc_darts2900000', help='which architecture to use')
 parser.add_argument('--grad_clip', type=float, default=5, help='gradient clipping')
-parser.add_argument("--num_workers", default=8, type=int, help="num of workers(data_loader)")
 parser.add_argument('--multigpu', default=True, action='store_true', help='If true, training is not performed.')
 parser.add_argument("--seed", default=1, type=int, help="seed")
 parser.add_argument("--iteration", default=1, type=int, help="iteration")
