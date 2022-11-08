@@ -34,3 +34,54 @@ import numpy as np
 - Add a process that uses a part of operations to MixedOp
 - Change nn.AdaptiveAvgPool2d to match pytorch version
 - Add variables to be defined in initialize_alphas
+
+## model_search.py
+
+#### Add library
+```
+import torch.nn.functional as F
+```
+#### Add main
+- Add a process that uses a part of operations to MixedOp
+- Change FactorizedReduce to process differently depending on whether the input is even or odd.
+
+## train.search.py
+
+#### Add library
+```
+import datetime
+import csv
+from collections import namedtuple
+import train as training
+import visualize as vis
+from model import NetworkCIFAR as Network2
+from torchvision import transforms
+import random
+from tqdm import tqdm
+from torchsummary import summary
+```
+#### Add argument
+```
+parser.add_argument('--target_layers', type=int, default=20, help='target total number of layers')
+parser.add_argument('--gammas_learning_rate', type=float, default=6e-2, help='learning rate for arch encoding')
+parser.add_argument('--multigpu', default=True, action='store_true', help='If true, training is not performed.')
+parser.add_argument('--auxiliary', action='store_true', default=False, help='use auxiliary tower') # 11/4 need check
+parser.add_argument('--auxiliary_weight', type=float, default=0.4, help='weight for auxiliary loss')
+parser.add_argument('--train_mode', action='store_true', default=True, help='use train after search')
+parser.add_argument('--val_mode', action='store_true', default=True, help='use validation and check accuracy')
+parser.add_argument("--seed", default=1, type=int, help="seed")
+parser.add_argument("--iteration", default=1, type=int, help="iteration")
+parser.add_argument("--id", default=1, type=int, help="sampler id")
+parser.add_argument("--limit_param", default=2000000, type=int, help="upper limit of params")
+parser.add_argument("--lambda_a", default=0.1, type=float, help="lambda of architecture")
+```
+#### Add main
+-
+-
+
+## train.py
+
+## utils.py
+
+## visualize.py
+
