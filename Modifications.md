@@ -76,8 +76,11 @@ parser.add_argument("--limit_param", default=2000000, type=int, help="upper limi
 parser.add_argument("--lambda_a", default=0.1, type=float, help="lambda of architecture")
 ```
 #### Add main
--
--
+- Add csv output function for number of parameters, training loss, etc.
+- Add code to save architecture visualization results per Epochs
+- Add a proposed method of calculating the number of parameters and changing the process depending on the results
+- Add code to measure total time, validation time, and latency
+- Add a process that can move directly to the re-training(train.py) code using the architecture with the highest accuracy in the search
 
 ## train.py
 
