@@ -20,9 +20,6 @@ from model import NetworkCIFAR as Network2
 - Add PRIMITIVES_PARAM for operation candidates with convolution calculations
 - Add architectures searched for in this experiment
 
-## model.py
-- Change fully-connected layer inputs
-
 ## model_search.py
 
 #### Add library
@@ -35,6 +32,9 @@ import numpy as np
 - Change nn.AdaptiveAvgPool2d to match pytorch version
 - Add variables to be defined in initialize_alphas
 - Change FactorizedReduce to process differently depending on whether the input is even or odd.
+
+## model.py
+- Change fully-connected layer inputs
 
 ## train.search.py
 
