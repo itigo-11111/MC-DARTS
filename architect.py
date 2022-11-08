@@ -1,10 +1,7 @@
-from numpy.core.fromnumeric import sort
 import torch
 import numpy as np
 import torch.nn as nn
 from torch.autograd import Variable
-# from decimal import Decimal, ROUND_DOWN
-from decimal import Decimal, ROUND_HALF_UP
 import logging
 import random
 from model import NetworkCIFAR as Network2
@@ -105,34 +102,15 @@ class Architect(object):
 
 
     self.optimizer_gammas.zero_grad()
-
-    # np.set_printoptions(suppress=True)
     np.set_printoptions(precision=4)
-    # logging.info(self.model.alphas_normal)
 
-    # print(self.model.alphas_normal)
-
-    # print(self.model.alphas_normal.size())
-    # print(self.model.betas_reduce)
-    # print(self.model.gammas_normal)
-
-
-    # print("param:{} limit:{}".format(pytorch_total_params_train,limit_param)) 
     if pytorch_total_params_train > limit_param :
       self.param_backward_step(input_valid, target_valid, pytorch_total_params_train,step,limit_param,num_flag,lambda_a,loot)
     
     
       self.optimizer_gammas.step()
       self.scheduler.step()
-      # print(self.model.alphas_normal)
-      # print(self.model.betas_normal)
-      # print(self.model.gammas_normal)
       bb = self.model.gammas_normal.clone().detach()
-      # logging.info(self.model.alphas_normal)
-      # logging.info(aa - bb)
-      # print(aa - bb)
-      # print(self.model.alphas_reduce)
-
 
       gammas_normal_nonparam = self.model.alphas_normal[:,:4].clone().detach()
       gammas_reduce_nonparam = self.model.alphas_reduce[:,:4].clone().detach()
@@ -141,50 +119,22 @@ class Architect(object):
       self.model.alphas_reduce.data = torch.cat([gammas_reduce_nonparam,self.model.gammas_reduce],dim=1)
     else:
       self.optimizer.zero_grad()
-      # logging.info(self.model.alphas_normal)
-      # print(self.model.gammas_normal)
       self._backward_step(input_valid, target_valid,pytorch_total_params_train,step,limit_param,num_flag)
       self.optimizer.step()
-    # print("after:")
-    # print(self.model.alphas_normal)
-    # print(self.model.betas_normal)
-    # print(self.model.gammas_normal)
-  
-  # def _backward_step_old(self, input_valid, target_valid,pytorch_total_params_train,step,limit_param):
-  #   loss = self.model._loss(input_valid, target_valid)
-  #   loss.backward()
+
     return train_param,genotype
 
   def _backward_step(self, input_valid, target_valid,pytorch_total_params_train,step,limit_param,num_flag):
     loss = self.model._loss(input_valid, target_valid,num_flag)
-    # logging.info("loss => {} param => {} ".format(loss.item(),pytorch_total_params_train))
+
     loss.backward()
-    # print(input_valid.grad)
   
   def param_backward_step(self, input_valid, target_valid,pytorch_total_params_train,step,limit_param,num_flag,lambda_a,loot):
     loss = self.model.param_loss(input_valid, target_valid,num_flag) 
-    # loss = loss*0.0001 + torch.tensor(pytorch_total_params_train*lambda_a)
-    # with torch.set_grad_enabled(False):
+
     loss = loss*torch.tensor((pytorch_total_params_train - limit_param),requires_grad=False)*lambda_a
-    # loss = torch.exp(loss*torch.tensor((pytorch_total_params_train - limit_param)/pytorch_total_params_train))
 
-    # loss = loss*0.00001 + torch.abs(torch.tensor(pytorch_total_params_train - limit_param))*lambda_a
-    # loss = loss*0.00001
-    # print("loss => {} param => {}".format(loss.item(),pytorch_total_params_train))
-    # logging.info("loss => {} param => {} loot => {}".format(loss.item(),pytorch_total_params_train,loot))
-
-    # loss.backward(retain_graph=True)
     loss.backward()
-    # print(input_valid.grad)
-    # print(Decimal(self.model.gammas_normal.grad).quantize(Decimal(.00000000’),rounding=ROUND_HALF_UP))
-    # print("{0:.7f}".format(Decimal(self.model.gammas_normal.grad)))
-    
-    # self.model.gammas_normal.grad = abs(self.model.gammas_normal.grad)
-    # self.model.gammas_reduce.grad = abs(self.model.gammas_reduce.grad)
-    # self.model.betas_normal.grad = abs(self.model.betas_normal.grad)
-    # self.model.betas_reduce.grad = abs(self.model.betas_normal.grad)
-
-    # print(self.model.gammas_normal.grad)
 
   def _backward_step_unrolled(self, input_train, target_train, input_valid, target_valid, eta, network_optimizer,device):
     unrolled_model = self._compute_unrolled_model(input_train, target_train, eta, network_optimizer,device)
