@@ -81,8 +81,34 @@ parser.add_argument("--lambda_a", default=0.1, type=float, help="lambda of archi
 - Add a proposed method of calculating the number of parameters and changing the process depending on the results
 - Add code to measure total time, validation time, and latency
 - Add a process that can move directly to the re-training code(train.py) using the architecture with the highest accuracy in the search
+- Display of calculation progress using tqdm library
 
 ## train.py
+
+#### Add library
+```
+import csv
+import random
+import time as tm
+import datetime
+
+from torchvision import transforms
+from tqdm import tqdm
+from torchsummary import summary
+```
+#### Add argument
+```
+parser.add_argument('--multigpu', default=True, action='store_true', help='If true, training is not performed.')
+parser.add_argument("--iteration", default=1, type=int, help="iteration")
+parser.add_argument("--id", default=1, type=int, help="sampler id")
+parser.add_argument("--limit_param", default=2000000, type=int, help="upper limit of params")
+parser.add_argument("--lambda_a", default=0.0001, type=float, help="lambda of architecture") 
+parser.add_argument('--gammas_learning_rate', type=float, default=6e-4, help='learning rate for arch encoding')
+```
+#### Add main
+- Add csv output function for number of parameters, training loss, etc.
+- Add code to measure total time, validation time, and latency
+- Display of calculation progress using tqdm library
 
 ## utils.py
 
