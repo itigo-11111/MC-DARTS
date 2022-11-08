@@ -112,5 +112,22 @@ parser.add_argument('--gammas_learning_rate', type=float, default=6e-4, help='le
 
 ## utils.py
 
+#### Add library
+```
+try:
+    from torch.hub import load_state_dict_from_url
+except ImportError:
+    from torch.utils.model_zoo import load_url as load_state_dict_from_url
+```
+#### Add main
+- Change torch.eq to match pytorch version
+- Added Padding processing to Transform
+
 ## visualize.py
 
+#### Add library
+```
+import os
+```
+#### Add main
+- 
