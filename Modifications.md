@@ -130,4 +130,4 @@ except ImportError:
 import os
 ```
 #### Add main
-- Changed to be able to move an architecture from train_search.py
+- Change to be able to move an architecture from train_search.py
