@@ -112,7 +112,7 @@ except ImportError:
 ```
 #### Add main
 - Change torch.eq to match pytorch version
-- Added Padding processing to Transform
+- Add Padding processing to Transform
 
 ## visualize.py
 
