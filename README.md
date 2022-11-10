@@ -3,6 +3,9 @@
 MC-DARTS (Model Size Constrained Differentiable
 Architecture Search) adding constraints to DARTS to search for a network architecture considering the accuracy and the model size.
 
+MC-DARTS has been accepted at NeurIPS 2022 Has it Trained Yet? A Workshop for Algorithmic Efficiency in Practical Neural Network Training!
+https://openreview.net/pdf?id=jKJ6OcvqdQ
+
 This code was created based on the [DARTS](https://github.com/quark0/darts).
 New branches for loss and update formulas have been added ([Detailed modifications](https://github.com/itigo-11111/MC-DARTS/blob/main/Modifications.md) ).
 
