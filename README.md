@@ -26,10 +26,12 @@ python-graphviz (0.20)
 
 ## Usage
 
-#### Architecture search 
+#### Architecture search (CIFAR10)
 ```
 python train_search.py --limit_param 2500000
 ```
+
+The paper prepares it in advance, but this code downloads the dataset so that it can be run immediately.
 
 #### Architecture evaluation ( arch => use architecture)
 ```
